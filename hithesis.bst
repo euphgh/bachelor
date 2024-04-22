@@ -1,10 +1,10 @@
 %%
-%% This is file `examples/hitbook/chinese/hitszthesis.bst',
+%% This is file `examples/hitbook/chinese/hithesis.bst',
 %% generated with the docstrip utility.
 %%
 %% The original source files were:
 %%
-%% hithesis.dtx  (with options: `shenzhenbst')
+%% hithesis.dtx  (with options: `bst')
 %% 
 %% This is a generated file.
 %% 
@@ -23,7 +23,6 @@
 %% To produce the documentation run the original source files ending with `.dtx'
 %% through LaTeX.
 %% 
-%% This bst file comes from https://github.com/YangLaTeX/hitszthesis
 ENTRY                                             % class Entry {
 {                                                 % public:
   author                                          %   String author;
@@ -97,12 +96,12 @@ FUNCTION {cap.edition.en}       {"~ed"}
 FUNCTION {cap.edition.zh}       {"版"}
 FUNCTION {cap.anonymous.en}     {"Anon"}
 FUNCTION {cap.anonymous.zh}     {"佚名"}
-FUNCTION {cap.no.address.en}    {"［S.l.］"}
-FUNCTION {cap.no.address.zh}    {"［出版地不详］"}
-FUNCTION {cap.no.publisher.en}  {"［s.n.］"}
-FUNCTION {cap.no.publisher.zh}  {"［出版者不详］"}
-FUNCTION {cap.et.al.en}         {"，et~al"}
-FUNCTION {cap.et.al.zh}         {"，等"}
+FUNCTION {cap.no.address.en}    {"[S.l.]"}
+FUNCTION {cap.no.address.zh}    {"[出版地不详]"}
+FUNCTION {cap.no.publisher.en}  {"[s.n.]"}
+FUNCTION {cap.no.publisher.zh}  {"[出版者不详]"}
+FUNCTION {cap.et.al.en}         {", et~al"}
+FUNCTION {cap.et.al.zh}         {", 等"}
 FUNCTION {cap.translate.en}     {"~trans"}
 FUNCTION {cap.translate.zh}     {"译"}
 FUNCTION {cap.doi.url}          {"http://dx.doi.org/"}
@@ -112,8 +111,8 @@ FUNCTION {cap.rd.en}            {"rd"}
 FUNCTION {cap.th.en}            {"th"}
 
 FUNCTION {cap.space}            {" "}
-FUNCTION {cap.comma}            {"\@，"}
-FUNCTION {cap.colon}            {"\thinspace{}\textnormal{：}"}
+FUNCTION {cap.comma}            {"\@, "}
+FUNCTION {cap.colon}            {"\textnormal{: }"}
 FUNCTION {cap.period}           {"\@. "}
 FUNCTION {cap.double.slash}     {" //\thinspace{}"}
 FUNCTION {cap.dash}             {"\textnormal{-}"}
@@ -346,13 +345,13 @@ FUNCTION {add.brace} {                            % String Entry::add_brace(Stri
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                                                   %
 FUNCTION {add.bracket} {                          % String Entry::bracket(String str) {
-  "（" swap$ * "）\!\!" *                         %   return "（" + str + "）\!\!";
+  "(" swap$ * ")" *                               %   return "(" + str + ")";
 }                                                 % }
                                                   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                                                   %
 FUNCTION {add.squarebracket} {                    % String Entry::add_squarebracket(String str) {
-  "［" swap$ * "］" *                             %   return "［" + str + "］";
+  "[" swap$ * "]" *                               %   return "[" + str + "]";
 }                                                 % }
                                                   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -616,9 +615,9 @@ FUNCTION {format.names} {                         % String Entry::format_names(S
     remove.dots 'jrname :=                        %     jrname = remove_dots(tmp);
     namelist nameindex "{f}" format.name$         %     tmp = format_name(namelist, nameindex, "{f}");
     remove.dots                                   %     tmp = remove_dots(tmp);
-    "u" change.case$ 'firstname :=                %     firstname = change_case(tmp, "u");
+    'firstname :=                                 %     firstname = change_case(tmp, "u");
     namelist nameindex "{ll}" format.name$        %     tmp = format_name(namelist, nameindex, "{ll}");
-    "u" change.case$ 'lastname :=                 %     lastname = change_case(tmp, "u");
+    'lastname :=                                  %     lastname = change_case(tmp, "u");
     jrname empty$ not {                           %     if (! empty(jrname)) {
       jrname * " " *                              %       result = result + jrname + " "
     } 'skip$ if$                                  %     }
@@ -711,7 +710,7 @@ FUNCTION {format.booktitle} {                     % String Emtry::format_booktit
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                                                   %
 FUNCTION {format.mark} {                          % String Emtry::format_mark(String mark) {
-  "\,［" swap$ * "］" *                           %   mark = " ［" + mark + "］";
+  "[" swap$ * "]" *                               %   mark = "[" + mark + "]";
   "mark" format.bibinfo                           %   return format_bibinfo(mark, "mark");
 }                                                 % }
                                                   %
@@ -1052,21 +1051,6 @@ FUNCTION {output.address} {                       % void Entry::output_address(i
     required {                                    %     if (required == 1) {
       "Require address: " cite$ * warning$        %       warning("Require address: " + this.cite);
       cap.period write$                           %       write(cap_period);
-      cap.no.address format.address write$        %       write(format_address(cap_no_address()));
-    } 'skip$ if$                                  %     }
-  } if$                                           %   }
-}                                                 % }
-                                                  %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-FUNCTION {output.inproaddress} {                  % void Entry::output_inproaddress(int required) {
-  'required :=                                    %   this.required = required;
-  address empty$ not {                            %   if (! empty(this.address)) {
-    cap.comma write$                              %     write(cap_comma);
-    address format.address write$                 %     write(format_address(this.address));
-  } {                                             %   } else {
-    required {                                    %     if (required == 1) {
-      "Require address: " cite$ * warning$        %       warning("Require address: " + this.cite);
-      cap.comma write$                            %       write(cap_comma);
       cap.no.address format.address write$        %       write(format_address(cap_no_address()));
     } 'skip$ if$                                  %     }
   } if$                                           %   }
@@ -1499,6 +1483,12 @@ FUNCTION {phdthesis} {                            % void Entry::phdthesis() {
 }                                                 % }
                                                   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                                                  %
+FUNCTION {masterthesis} {                         % void Entry::masterthesis() {
+  "D" set.mark                                    %   set_mark("D");
+  thesis.impl                                     %   thesis_impl();
+}                                                 % }
+                                                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                                                   %
 FUNCTION {mastersthesis} {                        % void Entry::mastersthesis() {
@@ -1774,33 +1764,6 @@ FUNCTION {inbook.impl} {                          % void Entry::inbook_impl() {
                                                   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                                                   %
-FUNCTION {inproceedings.impl} {                   % void Entry::inproceedings_impl() {
-  start.bibitem                                   %   start_bibitem();
-  true output.author                              %   output_author(true);
-  true output.title                               %   output_title(true);
-  true output.mark                                %   output_mark(true);
-  false output.translator                         %   output_translator(false);
-  cap.double.slash write$                         %   write(cap_double_slash);
-  false output.editor                             %   output_editor(false);
-  true output.series.volume.booktitle             %   output_series_volume_booktitle(true);
-  false output.edition                            %   output_edition(false);
-  publisher empty$ not {                          %   if (! empty(this.publisher)) {
-    true output.inproaddress                      %     output_inproaddress(true);
-    true output.publisher                         %     output_publisher(true);
-    cap.comma write$                              %     write(cap_comma);
-  } {                                             %   } else {
-    true output.inproaddress                      %     output_inproaddress(true);
-    cap.comma write$                              %     write(cap_comma);
-  } if$                                           %   }
-  true output.year                                %   output_year(true);
-  false output.pages                              %   output_pages(false);
-  false output.citedate                           %   output_citedate(false);
-  false output.url.or.doi                         %   output_url_or_doi(false);
-  end.bibitem                                     %   end_bibitem();
-}                                                 % }
-                                                  %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                                                  %
 FUNCTION {inbook} {                               % void Entry::inbook() {
   "M" set.mark                                    %   set_mark("M");
   inbook.impl                                     %   inbook_impl();
@@ -1817,7 +1780,7 @@ FUNCTION {incollection} {                         % void Entry::incollection() {
                                                   %
 FUNCTION {inproceedings} {                        % void Entry::inproceedings() {
   "C" set.mark                                    %   set_mark("C");
-  inproceedings.impl                              %   inproceedings_impl();
+  inbook.impl                                     %   inbook_impl();
 }                                                 % }
                                                   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
