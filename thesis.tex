@@ -105,8 +105,13 @@
 \frontmatter
 \input{front/cover} % 封面
 \makecover
+% \input{front/denotation}%物理量名称表,符合规范为主，有要求添加
 \tableofcontents %目录
 \mainmatter
+\include{body/Introduction}
+\include{body/Background}
+\include{body/Hardware}
+\include{body/Software}
 \backmatter
 \include{back/conclusion}   % 结论
 \bibliographystyle{gbt7714-numerical}
@@ -121,6 +126,9 @@
 \authorization %授权
 % \authorization[scan.pdf] %添加扫描页的命令，与上互斥
 \include{back/acknowledgements} %致谢
+\begin{appendix}%附录
+    \input{back/appendix01}%本科生翻译论文
+\end{appendix}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 本科书序（威海校区）
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
