@@ -61,38 +61,57 @@ ctitletwo={器虚拟化扩展与系统评测},%本科生封面使用
   estudenttype={Master of Art},
   %
   % 关键词用“英文逗号”分割
-  ckeywords={\TeX, \LaTeX, CJK, 嗨！, thesis},
-  ekeywords={\TeX, \LaTeX, CJK, template, thesis},
+ckeywords={RISC-V, 高性能处理器, 虚拟化, 系统评测},
+ekeywords={RISC-V, High-performance processor, Virtualization, System evaluation},
 }
 
 \begin{cabstract}
+虚拟化是一项在云服务和数据中心中广泛使用的关键技术。
+在需求的推动下，主流计算机体系结构已纷纷实现了虚拟化的硬件扩展支持。
+作为一种新兴的开源指令集，RISC-V也开始关注云数据中心的需求，于是提出了处理器的虚拟化扩展规范，这为研究提供了巨大的空间。
+本文以为RISC-V开源处理器"香山"添加虚拟化扩展为中心工作，对虚拟化微架构、系统软件和调试工具三个方面展开研究。
 
-  摘要的字数（以汉字计），硕士学位论文一般为500 $\sim$ 1000字，博士学位论文为1000 $\sim$ 2000字，
-  均以能将规定内容阐述清楚为原则，文字要精练，段落衔接要流畅。摘要页不需写出论文题目。
-  英文摘要与中文摘要的内容应完全一致，在语法、用词上应准确无误，语言简练通顺。
-  留学生的英文版博士学位论文中应有不少于3000字的“详细中文摘要”。
-  
-  关键词是为了文献标引工作、用以表示全文主要内容信息的单词或术语。关键词不超过 5
-  个，每个关键词中间用分号分隔。（模板作者注：关键词分隔符不用考虑，模板会自动处
-  理。英文关键词同理。）
+在微架构方面，我们采用了分布式的一级页表缓存和集中式的地址翻译引擎，以平衡翻译速度和时序压力。
+通过在二级页表缓存中缓存第二阶段的页表，能够加快第二阶段地址翻译的速度。
+此外，在页表翻译单元中我们还设计了一些能够提高吞吐量的微架构。
+
+在系统软件方面，我们选择了KVM作为目标，在添加虚拟化扩展后的"香山"上启动Linux，并对主机性能进行了评测。
+然而，在启动KVM时遇到了难以调试的错误。软硬件联合调试的复杂性以及现有调试工具的能力限制使问题难以解决。
+
+在调试工具方面，我们尝试了基于逻辑仿真软件的差分测试，以及结合FPGA仿真加速平台的软硬件联合方法。
+纯软件的差分测试能够准确定位错误现场，提供所需的调试波形图，但仿真速度不可接受，尤其在需要启动操作系统和虚拟机的场景下。
+因此，我们尝试了从操作系统启动后开始进行仿真的体系结构检查点方法。
+FPGA仿真加速平台可以快速执行，获取任意时间点的微架构检查点，并在逻辑仿真软件中精确重放波形图。
+然而，它对于获取体系结构信息的能力非常有限，难以帮助调试复杂系统。
+因此，我们提出了在差分测试框架中重放检查点，以及将差分测试硬件化在FPGA的两种想法。
 \end{cabstract}
 
 \begin{eabstract}
-  An abstract of a dissertation is a summary and extraction of research work
-  and contributions. Included in an abstract should be description of research
-  topic and research objective, brief introduction to methodology and research
-  process, and summarization of conclusion and contributions of the
-  research. An abstract should be characterized by independence and clarity and
-  carry identical information with the dissertation. It should be such that the
-  general idea and major contributions of the dissertation are conveyed without
-  reading the dissertation.
+Virtualization is a key technology widely used in cloud services and data centers.
+Driven by demand, mainstream computer architectures have implemented hardware extension support for virtualization.
+As a open source instruction set, RISC-V has also begun to focus on the needs of cloud data centers, 
+and thus proposed hypervisor extension specification, which provides a huge space for research.
+In this paper, we focus on adding hypervisor extension to the open source RISC-V processor "XiangShan", 
+and investigate three aspects: virtualization microarchitecture, system software, and debugging tools.
+
+In terms of microarchitecture, 
+we adopt a distributed L1 TLB and a centralized address translation engine to balance translation speed and timing pressure.
+By caching the second stage page table in the L2 TLB, it is possible to speed up the translation from guest physical address to host physical address.
+In addition, we have designed some delicate micro-architectures in the page table walker that can improve the throughput.
+
+In terms of system software, we chose KVM as the target, 
+booted Linux on XiangShan with hypervisor extension, and evaluated the host performance.
+However, we encountered some problems which is difficult debugged when running KVM. 
+The complexity of joint debugging of hardware and software,
+and the limitations of existing debugging tools made it difficult to solve this problems.
   
-  An abstract should be concise and to the point. It is a misunderstanding to
-  make an abstract an outline of the dissertation and words ``the first
-  chapter'', ``the second chapter'' and the like should be avoided in the
-  abstract.
-  
-  Key words are terms used in a dissertation for indexing, reflecting core
-  information of the dissertation. An abstract may contain a maximum of 5 key
-  words, with semi-colons used in between to separate one another.
+In terms of debugging tools, we tried difftests based logic simulation software, 
+as well as FPGA simulation acceleration platforma for joint debugging of hardware and software.
+Pure software-based difftest can accurately locate the error site and provide waveform for debug, 
+but the simulation speed is unacceptable, especially in our scenarios requiring boot the operating system and virtual machine.
+Therefore, we tried architecture checkpoints that make it possible to starts the simulation after the operating system booted.
+The FPGA simulation acceleration platform can speed up software executing, acquire microarchitecture checkpoints at any time, 
+and replay the waveform in the logic simulation software.
+However, it can not analyse architecture information to help complex systems debug.
+Therefore, we propose replaying checkpoints in a difftest and hardwareizing difftest in FPGAs.
 \end{eabstract}
