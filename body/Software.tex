@@ -8,15 +8,15 @@
 \section{操作系统的适配与启动}
 关于目标适配的虚拟化软件Linux KVM，是一个开源的Type2虚拟机管理系统。
 在RISC-V架构方面，已经存在初步适配后的软件——kvm-riscv\cite{github:riscv-kvm}，
-该项目主要包括启动KVM选项并适配RISC-V架构后的Linux源码及配置、包括kvmyool的根文件系统。
+该项目主要包括启动KVM选项并适配RISC-V架构后的Linux源码及配置、包括kvmtool的根文件系统。
 该套完整系统软件可以直接在RISC-V处理器模拟器（qemu、spike）中运行。
 
-特别是kvmyool，这是是一个Linux的用户态程序。
+特别是kvmtool，这是是一个Linux的用户态程序。
 可以通过使用它在命令行中直接使用KVM，在Linux中启动一个虚拟机。
 需要手动编译该软件并将其放入根文件系统中，考虑到根文件系统应该尽可能小，尽可能简便。
 因此根文件系统中并未包含动态链接的可执行程序的系统库，例如libc和libm。
-为此，kvmyool需要被静态编译，特别是其依赖库libfdt，
-也需要将其静态编译后，一起链接到kvmyool中。
+为此，kvmtool需要被静态编译，特别是其依赖库libfdt，
+也需要将其静态编译后，一起链接到kvmtool中。
 
 本项目计划在FPGA中部署硬件直接启动Linux和KVM，通过观察串口输出判断是否正常运行。
 因为完成操作系统的启动至少需要3亿以上的周期数，
@@ -25,23 +25,49 @@
 编写对应平台专用设备树，还需要根据FPGA使用的外设开启对应的驱动。
 
 完成软件适配之后，需要在FPGA上启动进行软硬件联合调试。
-但是在尝试启动Linux时遇到了难以调试的问题：Linux的输出停止在如图所示的地方。
+但是在尝试启动Linux时遇到了难以调试的问题：
+Linux的输出停止在如图\ref{fig:console-block}所示的地方。
 由于在FPGA运行无法获取波形图，难以观察电路内部的情况。
-此时离上电复位也经过了数百万个周期，
-即使使用逻辑仿真也需要极长的时间才能运行到出错点。
+此时离上电复位也经过了数百万个周期，即使使用逻辑仿真也需要极长的时间才能运行到出错点。
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.6]{empty.png}
+    \caption{虚拟化扩展后的“香山”启动Linux的串口输出}
+    \label{fig:console-block}
+\end{figure}
+
 为了能够快速仿真到出错点，并且使用逻辑仿真软件生成波形的能力观察电路内部细节，
 本项目使用REMU\cite{iccd2023remu}——基于FPGA的仿真加速平台，进行调试。
+平台的实物图如\ref{fig:remu-card}所示。
 通过使用REMU，可以在FPGA中快速地将Linux启动到任意时刻，然后使用ctrl-c中断现场，
 并将此时硬件内部所有寄存器和存储器通过检查点的方式保存。
-检查点可以被逻辑仿真软件工具重放，即可快速地得到数百万周期后的波形。
+检查点数据通过DMA从FPGA发送到x86主机后，
+可以被逻辑仿真软件工具重放，即可快速地得到数百万周期后的波形。
 
-通关观察REMU重放的波形，可以清楚地观察到处理器在某一时刻后没有提交任何的指令，
-也没有对外发起任何的访存请求。
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics{remu-card.png}
+    \caption{REMU平台硬件实体}
+    \label{fig:remu-card}
+\end{figure}
+
+通过观察如图\ref{fig:console-block-wave}所示的REMU重放波形，
+可以清楚地观察到处理器在某一时刻后没有提交任何的指令，也没有对外发起任何的访存请求。
 造成这种现象的一般原因是某一级流水线的自动机设计缺陷：
 某种特殊情况使得状态机停滞在某一状态，无法进行状态切换，导致整个处理器停滞。
 经过细致的波形分析即可发现，是指令缓存的状态机设计的缺陷。
 在某种特殊的不命中的情况下，既不对外发起访存请求，也不使用内部缓存块数据返回。
 在REMU的帮助下，找到了错误的代码进行修改后，Linux能够正常启动。
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.6]{empty.png}
+    \caption{REMU重放的Linux启动波形}
+    \label{fig:console-block-wave}
+\end{figure}
 
 \section{操作系统下的性能评测}
 在多年发展下，虚拟化评测已成为一个研究良好的领域，开发了许多评估各种虚拟化平台性能的基准方法。
@@ -52,10 +78,16 @@
 但是不论是宏观还是微观，其中一个重要的基准线便是主机性能，即未开启虚拟化下的运行基准测试的性能。
 该阶段已经完成Linux操作系统的启动，在评估虚拟化性能前，可以先对主机性能进行简单评测。
 于是，同样在FPGA平台中，使用虚拟化扩展的“香山”处理器，启动Linux。
-在Linux中，通过命令行运行Coremark、dy等基准测试，得到如图所示的测试结果。
-此外，该实验也使用了未添加虚拟化扩展的“香山”处理器进行，对比结果如图所示。
-根据测试结果可以看出，虚拟化扩展的添加，
-对主机性能影响并不大，保持了原有的高性能乱序核的特点。
+在Linux中，通过命令行运行CoreMark、Dhrystone等基准测试。
+同时，作为对比也使用了未添加虚拟化扩展的“香山”处理器进行，对比结果如图\ref{fig:perf}所示。
+根据测试结果可以看出，虚拟化扩展的添加，对主机性能影响并不大，保持了原有的高性能乱序核的特点。
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.6]{empty.png}
+    \caption{虚拟化扩展后的“香山”与原始“香山”的性能对比}
+    \label{fig:perf}
+\end{figure}
 
 \chapter{虚拟机管理系统的调试}
 通过对系统软件的修改移植，现阶段可以在添加虚拟化扩展的“香山”处理器中启动操作系统，
@@ -158,8 +190,15 @@ NEMU可以在运行任意负载的任意时刻停下，将此刻的体系结构�
 然而在系统软件的适配中遇到了问题，由于时间限制，尚未完成调试。
 关于系统软件的问题，由于NEMU和“香山”的SoC在启动时暂时不支持外存。
 所以根文件系统必须要和内核镜像打包在一起。
-然而尝试使用NEMU单独启动操作系统之后，如图所示无法完成init进程的启动，进入Shell。
-为了解决该问题，需要使用QEMU和gdb进行联合调试。
+然而尝试使用NEMU单独启动操作系统之后，如图\ref{fig:init-block}所示无法完成init进程的启动，进入Shell。
+为了解决该问题，下一步需要使用QEMU和gdb进行联合调试，解决软件中潜在的问题。
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.5]{init-block.png}
+    \caption{NEMU启动Linux时无法完成init进程的加载}
+    \label{fig:init-block}
+\end{figure}
 
 \paragraph{FPGA平台}
 关于FPGA硬件加速仿真平台REMU，目前的检查点和波形重放功能十分单一，支持的逻辑仿真软件只有iverilog。
@@ -178,7 +217,7 @@ iverilog和verilator均存在对应的VPI实现，因此存在部分可复用的
 所需做的是使用C++编写verilator的仿真激励，修改部分verilator和iverilog不兼容的部分。
 尽管目前已经能够使用verilator重放REMU检查点，但是在实用化上还远远不够。
 后续还需要对接差分测试的仿真框架与目前已有的verilator仿真框架。
-包括把检查点的数据放入模拟器NEMUd在差分测试的仿真激励脚本中添加VPI的相关代码等。
+包括把检查点的数据放入模拟器NEMU在差分测试的仿真激励脚本中添加VPI的相关代码等。
 该部分虽然仅只是作为工程实现，没有太多的设计创新的部分。
 但是为REMU丰富了使用的方法，为后续REMU的差分测试硬件化打下基础。
 

@@ -30,7 +30,8 @@ RISC-V的虚拟化扩展需要添加的硬件功能大致可分为特权控制�
 用于处理虚拟机中的异常自陷的流程的寄存器，例如配置自陷地址的vstvec、保存异常指令地址的vsepc。
 分离管理系统和虚拟机中使用的配置寄存器，能够使得虚拟机中出现异常时可以自己处理，不必自陷到虚拟机管理系统中。
 另一个变化是添加了一些虚拟机管理系统使用寄存器，用于配置管理系统可以捕获的虚拟机内执行的特殊指令（hstatus），
-虚拟机的中断注入和委托（hedeleg、hideleg、hgeip、hgeie）等。 因此，在中断异常的种类方面，原始的监管模式下所有的中断被虚拟机管理模式和虚拟监管模式各复制一份，
+虚拟机的中断注入和委托（hedeleg、hideleg、hgeip、hgeie）等。
+因此，在中断异常的种类方面，原始的监管模式下所有的中断被虚拟机管理模式和虚拟监管模式各复制一份，
 虚拟机管理模式还需要添加一个虚拟机外部中断，用于实现虚拟机直通中断。
 
 最后一部分是虚拟机管理模式下的特权指令和新增的页错误异常，为程序员提供管理虚拟地址翻译的方法。
@@ -131,7 +132,8 @@ QEMU\cite{qemu-riscv:H-ext}，Spike\cite{github:spike}等。
 通过比对正确的体系结构信息，精确定位出错现场。
 其次，仿真工具由于其可并行性低、同步要求高等自身特性，必然导致了执行速度原低于FPGA。
 尽管在开源社区和学术界存在许多高效的解决方案，
-例如verilator\cite{github:verilator}和manticore\cite{asplso23manticore}。
+例如iverilog\cite{github:iverilog}、
+verilator\cite{github:verilator}和manticore\cite{asplso23manticore}。
 但在运行大型基准测试和系统软件时，花费的时间仍然不可接受。
 
 在评测方面，FPGA被广泛运用于原型验证。
