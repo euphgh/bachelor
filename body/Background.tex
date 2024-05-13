@@ -4,7 +4,7 @@
 第二，介绍“香山”处理器的内存管理单元的原始架构，
 在第三章会直接介绍虚拟化扩展下的内存管理单元，此处对原始架构的说明能够帮助理解。
 第三，介绍本文所使用的所有调试工具和评测平台，能够帮助后文实验部分的理解。
-最后，会结合虚拟化扩展硬件实现的相关研究，介绍本文的研究动机。
+最后，会结合RISC-V虚拟化扩展软硬件的相关工作，对比着介绍本文的研究动机。
 
 \section{RISC-V虚拟化扩展}
 RISC-V的虚拟化扩展需要添加的硬件功能大致可分为特权控制和虚拟内存两大部分。
@@ -96,7 +96,7 @@ RISC-V的虚拟化扩展需要添加的硬件功能大致可分为特权控制�
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=0.6]{origin-mmu.png}
+\includegraphics[scale=0.9]{origin-mmu.png}
     \caption{“香山”处理器原始内存管理单元架构}
     \label{fig:origin-mmu}
 \end{figure}
