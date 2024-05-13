@@ -25,7 +25,7 @@
 %% 
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
 \ProvidesClass{hithesisbook}
-[2023/04/16 v3.1c Harbin Institute of Technology Thesis Template]
+[0000/00/00 v3.1d Harbin Institute of Technology Thesis Template]
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{
   family=hit,
@@ -44,6 +44,13 @@
   \hit@postdocfalse
   \expandafter\csname hit@#1true\endcsname
 }
+\ifhit@master\relax\else
+  \ifhit@doctor\relax\else
+    \ifhit@postdoc\relax\else
+      \hit@bachelortrue
+    \fi
+  \fi
+\fi
 \newif\ifhit@shenzhen
 \newif\ifhit@weihai
 \newif\ifhit@harbin
@@ -110,7 +117,10 @@
 \DeclareBoolOption[false]{subcapcenterlast}
 \DeclareBoolOption[false]{absupper}
 \DeclareBoolOption[true]{bsmainpagenumberline}
-\DeclareBoolOption[false]{bsfrontpagenumberline}
+\ifhit@harbin\ifhit@bachelor
+  \DeclareBoolOption[true]{bsfrontpagenumberline}
+\else\DeclareBoolOption[false]{bsfrontpagenumberline}\fi
+\else\DeclareBoolOption[false]{bsfrontpagenumberline}\fi
 \DeclareBoolOption[true]{bsheadrule}
 \DeclareBoolOption[true]{newtxmath}
 \DeclareBoolOption[false]{splitbibitem}
@@ -298,6 +308,13 @@
     }
   \fi
 \fi
+\ifhit@harbin\ifhit@bachelor
+\geometry{
+  top=36.5true mm,
+  headsep=1true mm,
+  bottom=28.8true mm
+  }
+\fi\fi
 \ifhit@debug%
   \RequirePackage{layout}
   \RequirePackage{layouts}
@@ -322,7 +339,7 @@
 \ifhit@english
 \RequirePackage[xindy,order=letter]{glossaries-extra}
 \newglossarystyle{engstyle}{%
-  \glossarystyle{long}%
+  \setglossarystyle{long}%
   \renewenvironment{theglossary}%
   {\vspace{-\intextsep}\centering\begin{longtable}{@{\hskip 1cm}p{3.5cm}p{\glsdescwidth}}}%
      {\end{longtable}}}
@@ -417,6 +434,10 @@
   \renewcommand{\headrulewidth}{0pt}
   \renewcommand{\footrulewidth}{0pt}
 }
+\newlength\hit@pagenumber@sep
+\ifboolexpr{bool {hit@harbin} and bool {hit@bachelor}}
+{\setlength\hit@pagenumber@sep{.3333333em}}
+{\setlength\hit@pagenumber@sep{.1666667em}}
 \fancypagestyle{hit@headings}{%
   \fancyhf{}
   \ifhit@english
@@ -475,7 +496,22 @@
           \fancyhead[C]{\songti\xiaowu[0]\hit@cschoolname\hit@weihaicampus\hit@bachelor@cxuewei\hit@bachelor@cthesisname}%
         \fi
       \fi
-      \fancyfoot[C]{\xiaowu\if@mainmatter\ifhit@bsmainpagenumberline-~\thepage~-\else\thepage\fi\else\ifhit@bsfrontpagenumberline-~\thepage~-\else\thepage\fi\fi}
+      \fancyfoot[C]{
+        \xiaowu
+        \if@mainmatter
+          \ifhit@bsmainpagenumberline
+            -\hspace{\hit@pagenumber@sep}\thepage\hspace{\hit@pagenumber@sep}-%
+          \else
+            \thepage%
+          \fi
+        \else
+          \ifhit@bsfrontpagenumberline
+            -\hspace{\hit@pagenumber@sep}\thepage\hspace{\hit@pagenumber@sep}-%
+          \else
+            \thepage%
+          \fi
+        \fi
+        }
       \ifhit@bsheadrule
         \renewcommand{\headrule}{
         \vskip 1.190132pt
@@ -667,7 +703,7 @@
   \else
     \ifthenelse%
     {\equal{#1}{\eabstractcname}}%
-    {\bfseries #1}%
+    {\ifhit@chapterbold\bfseries\fi #1}%
     % 实现章标题的居中加悬挂缩进，注意，此处一定是\CTEX@chaptername\CTEX@chapter@aftername, 否则是英文标题长度
     {\ifhit@chapterhang\settowidth{\hangindent}{\CTEX@chaptername\CTEX@chapter@aftername}\hangafter=1\fi#1}
   \fi
@@ -705,8 +741,8 @@
     chapter={
       afterindent=true,
       pagestyle={hit@headings},
-      beforeskip={\ifboolexpr{ bool {hit@weihai} and bool {hit@bachelor}}{49bp}{28.34646bp}},%一个空行 1.57481 × 18
-      afterskip={\ifboolexpr{ bool {hit@weihai} and bool {hit@bachelor}}{46bp}{28.74646bp}},%0.8应该不计算间距 0.8 × 18 + 0.57481×18
+      beforeskip={28.34646bp},%一个空行 1.57481 × 18
+      afterskip={28.74646bp},%0.8应该不计算间距 0.8 × 18 + 0.57481×18
       aftername={\par},
       format={\hit@chapter@engformat},
       nameformat={\hit@chapter@engnameformat},%\center 会影响之后全局
@@ -797,8 +833,8 @@
     chapter={
       afterindent=true,
       pagestyle={hit@headings},
-      beforeskip={28.34646bp},%一个空行 1.57481 × 18
-      afterskip={28.74646bp},%0.8应该不计算间距 0.8 × 18 + 0.57481×18
+      beforeskip={\ifboolexpe{ bool {hit@weihai} and bool {hit@bachelor}}{49bp}{28.34646bp}},%一个空行 1.57481 × 18
+      afterskip={\ifboolexpe{ bool {hit@weihai} and bool {hit@bachelor}}{46bp}{28.74646bp}},%0.8应该不计算间距 0.8 × 18 + 0.57481×18
       aftername=%
         {%
           \ifboolexpr{(bool {hit@harbin} and
@@ -823,7 +859,7 @@
         {%
           \ifboolexpr{(bool {hit@harbin} and
                       bool {hit@master}) or
-                      (bool {hit@shenzhen} and
+                      ((bool {hit@shenzhen} or bool {hit@harbin}) and
                       bool {hit@bachelor})}%
             {\quad}{\enspace}%
         },
@@ -839,7 +875,7 @@
         {%
           \ifboolexpr{(bool {hit@harbin} and
                       bool {hit@master}) or
-                      (bool {hit@shenzhen} and
+                      ((bool {hit@shenzhen} or bool {hit@harbin}) and
                       bool {hit@bachelor})}%
             {\quad}{\enspace}%
         },
@@ -855,7 +891,7 @@
         {%
           \ifboolexpr{(bool {hit@harbin} and
                       bool {hit@master}) or
-                      (bool {hit@shenzhen} and
+                      ((bool {hit@shenzhen} or bool {hit@harbin}) and
                       bool {hit@bachelor})}%
             {\quad}{\enspace}%
         },
@@ -929,7 +965,7 @@
     {\hit@chapter[#2]{#3}}%
     \IfValueT{#4}{%
       \addcontentsline{toe}{chapter}
-        {
+        {%
           \texorpdfstring
             {\bfseries\relax \hit@engtoc@chapapp \thechapter\hspace{0.5em}\ignorespaces #4}
             {\hit@engtoc@chapapp \thechapter\hspace{0.5em}\ignorespaces #4}
@@ -1065,10 +1101,36 @@
   \begin{CJKfilltwosides}[b]{#1}#2\end{CJKfilltwosides}}
 
 \def\hit@first@titlepage{%
-  \ifhit@postdoc\hit@first@titlepage@postdoc\else\ifhit@bachelor\hit@first@titlepage@bachelor\else\hit@first@titlepage@other\fi\fi}
+  \ifhit@postdoc
+    \hit@first@titlepage@postdoc
+  \else
+    \ifhit@bachelor
+      \ifhit@harbin
+        \hit@first@titlepage@other
+      \else
+        \hit@first@titlepage@bachelor
+      \fi
+    \else
+      \hit@first@titlepage@other
+    \fi
+  \fi
+  }
 
 \def\hit@second@titlepage{%
-  \ifhit@postdoc\hit@second@titlepage@postdoc\else\ifhit@bachelor\hit@second@titlepage@bachelor\else\hit@second@titlepage@other\fi\fi}
+  \ifhit@postdoc
+    \hit@second@titlepage@postdoc
+  \else
+    \ifhit@bachelor
+      \ifhit@harbin
+        \hit@second@titlepage@harbinbachelor
+      \else
+        \hit@second@titlepage@bachelor
+      \fi
+    \else
+      \hit@second@titlepage@other
+    \fi
+  \fi
+  }
 \newcommand{\hit@first@titlepage@postdoc}{
   {\songti\sihao\renewcommand{\arraystretch}{2}\
     \begin{tabular}{@{}r@{}l@{\hspace{7\ccwd}}r@{}l@{\hspace{3em}}r}
@@ -1282,6 +1344,11 @@
 }
 
 
+\newlength{\hit@schoolname@nddate}
+\ifboolexpr{bool {hit@harbin} and bool {hit@bachelor}}
+{\setlength{\hit@schoolname@nddate}{10.8mm}}
+{\setlength{\hit@schoolname@nddate}{1.4cm}}
+
 \newlength{\hit@etitlelength}%
 \newcommand{\hit@first@titlepage@other}{
   % 封面一
@@ -1289,9 +1356,14 @@
 {\equal{\hit@fontset}{siyuan}}%
 {\xiaosi[1]\vspace*{0.65em}}%
 {\xiaosi[1]\textcolor[rgb]{1,1,1}{\songti{\hit@hi}}}%
- \vspace*{1.2cm}
+\ifboolexpr{bool {hit@harbin} and bool {hit@bachelor}}
+{\vspace*{8.5mm}}{\vspace*{1.2cm}}
 \begin{center}
-  \begin{center}\xiaoyi[1]\songti\textbf{\hit@cxuewei\hit@cthesisname}\end{center}
+  \begin{center}\xiaoyi[1]\songti\textbf{%
+  \ifboolexpr{bool {hit@harbin} and bool {hit@bachelor}}
+  {\hit@bachelor@cxuewei\hit@bachelor@cthesisname}
+  {\hit@cxuewei\hit@cthesisname}
+  }\end{center}
       \begin{center}\xiaoer[1]\songti\bfseries
         \ifboolexpr
         {
@@ -1303,23 +1375,63 @@
           \hit@cbraceleft\hit@cstudenttype\hit@cbraceright
         }
       \end{center}
+      \ifboolexpr{bool {hit@harbin} and bool {hit@bachelor}}
+      {\vspace{-3.5mm}}{}
     \parbox[t][7.8cm][t]{\textwidth}{%
   \begin{center}\erhao\heiti\hit@ctitlecover\end{center}
 \ifhit@subtitle\begin{center}\hspace{-4em}\xiaoer\heiti\pozhehao\hit@csubtitle\end{center}\fi
   \begin{center}%
     \settowidth{\hit@etitlelength}{\erhao\hit@etitle\ifhit@subtitle\hit@title@esep\hit@esubtitle\fi}%
-    \ifdim\hit@etitlelength>450mm\xiaoer\else\erhao\fi%
+    \ifdim\hit@etitlelength>250mm\xiaoer\else\erhao\fi%
+    \ifhit@harbin\ifhit@bachelor
+    \vspace{1.27cm}
+    \fi\fi
     \textbf{\MakeUppercase{\hit@etitle}%
-\ifhit@subtitle\hit@title@esep\MakeUppercase{\hit@esubtitle}\fi}\end{center}}
+    \ifhit@subtitle\hit@title@esep\MakeUppercase{\hit@esubtitle}\fi}\end{center}}
 
     \parbox[t][7.4cm][t]{\textwidth}{
-  \begin{center}\xiaoer\songti\textbf{\hit@cauthor}\end{center}}
-    \parbox[t][1.4cm][t]{\textwidth}{
-  \begin{center}\kaishu\xiaoer\textbf{\hit@cschoolname}\end{center}}
+    \begin{center}\xiaoer\songti\textbf{\hit@cauthor}\end{center}}\\
+    \ifhit@harbin\ifhit@bachelor
+    \vspace{-12.5mm}
+    \fi\fi
+    \parbox[t][\hit@schoolname@nddate][t]{\textwidth}{\centering\kaishu\xiaoer\textbf{\hit@cschoolname}}
     {\songti\xiaoer\textbf{\hit@cdate}}
 \end{center}
 }
 
+\newcommand{\hit@second@titlepage@harbinbachelor}{
+  \begin{center}
+    \vspace*{-3mm}
+    \begin{flushright}
+      \xiaosi\hit@secretlevel：公开\hspace{14mm}
+    \end{flushright}
+    \vspace{2.1cm}
+    {\songti\bfseries\xiaoer \hit@bachelor@cxuewei    \hit@bachelor@cthesisname}\\[0.8cm]
+    \parbox[t][5cm][t]{\textwidth}{%
+      \erhao
+      \begin{center}
+        \heiti
+        \hit@ctitlecover%
+      \end{center}
+      \ifhit@subtitle
+        \begin{center}\hspace{-4em}\xiaoer\heiti\pozhehao\hit@csubtitle\end{center}\fi
+      }
+      \vspace{16mm}
+      {\sihao
+      \setlength{\hit@title@width}{6em}
+      \begin{center} \renewcommand{\arraystretch}{1.62} \songti
+  \begin{tabular}{l@{\hit@title@csep}l}
+    {\heiti \hit@put@title{\hit@cauthortitle}} & \hit@cauthor\\
+    {\heiti \hit@put@title{\hit@bachelor@cstudentidtitle}} & \hit@cstudentid \\
+    {\heiti \hit@put@title{\hit@bachelor@csupervisortitle}} & \hit@csupervisor\\
+    {\heiti \hit@put@title{\hit@bachelor@cmajortitle}} & \hit@csubject \\
+    {\heiti \hit@put@title{\hit@bachelor@caffiltitle}} & \hit@caffil\\
+    {\heiti \hit@put@title{\hit@cdatetitle}} & \hit@cdate\\
+    {\heiti \hit@put@title{\hit@cschoolnametitle}} & \hit@cschoolname
+  \end{tabular} \renewcommand{\arraystretch}{1}
+    \end{center} }
+  \end{center}
+}
 
 \newcommand{\hit@second@titlepage@other}{
   \begin{center}
@@ -1575,8 +1687,8 @@
       \penalty\@highpenalty
     \endgroup
   \fi}
-\renewcommand*\l@section{\@dottedtocline{1}{1em}{1.8em}}
-\renewcommand*\l@subsection{\@dottedtocline{2}{2em}{2.5em}}
+\renewcommand*\l@section{\@dottedtocline{1}{1em}{2em}}
+\renewcommand*\l@subsection{\@dottedtocline{2}{2em}{3em}}
 \renewcommand*\l@subsubsection{\@dottedtocline{3}{3\ccwd}{3.1em}}
 \def\@dotsep{0.75}           % 定义英文目录的点间距
 \setlength\leftmargini {0pt}
@@ -1703,10 +1815,19 @@
   \addcontentsline{toc}{chapter}{原创性声明}
   \hit@chapter*{\hit@declarename@bachelor}
   \else
-  \hit@appendix@chapter*{\hit@declarename@bachelor}
+    \ifhit@harbin
+        \ctexset{chapter/beforeskip=4mm}
+        \hit@chapter*{哈尔滨工业大学本科毕业论文（设计）\\ 原创性声明和使用权限}
+        \addcontentsline{toc}{chapter}{\texorpdfstring{\ifhit@chapterbold \bfseries \fi 哈尔滨工业大学本科毕业论文（设计）原创性声明和使用权限}{哈尔滨工业大学本科毕业论文（设计）原创性声明和使用权限}}
+    \else
+      \hit@appendix@chapter*{\hit@declarename@bachelor}
+    \fi
+  \fi
+  \ifhit@harbin
+    {\centering\xiaosan\heiti 本科毕业论文（设计）原创性声明\par}\vspace{3mm}
   \fi
   \hit@authorizationtext@bachelor
-  \vspace{2\baselineskip}
+  \vspace{\ifhit@harbin 4mm \else 2\baselineskip \fi}
   \ifhit@weihai
     \par\hfill\hit@authorsig\hspace{6em}
     \vspace{1\baselineskip}
@@ -1715,10 +1836,17 @@
     \par\hfill\hit@datefill
     \songti
   \else
+    \par\hspace{6em} \hit@authorsig\hfill\hit@frontdate\hit@datefill
+  \fi
+  \ifhit@harbin
+    \par\vspace{19mm}{\centering\xiaosan\heiti 本科毕业论文（设计）使用权限\par}\vspace{4mm}
+    \hit@second@authorizationtext@bachelor
+    \vspace{1\baselineskip}
     \par\hspace{6em}\hit@authorsig\hfill\hit@frontdate\hit@datefill
+    \vspace{0.7\baselineskip}
+    \par\hspace{6em}\hit@teachersig\hfill\hit@frontdate\hit@datefill
   \fi
 }
-
 \NewDocumentCommand{\authorization}{o}{%
   \IfNoValueTF{#1}{%
     \ifhit@bachelor\hit@authorization@bachelor\else\hit@authorization@other\fi
@@ -1728,24 +1856,22 @@
   \thispagestyle{hit@empty}%
   \phantomsection\addcontentsline{toc}{chapter}{\ifhit@bachelor
     \ifhit@shenzhen 原创性声明 \else
-    \hit@declarename@bachelor\else\hit@authorization@ctitle\fi\fi}%
+    \hit@declarename@bachelor\fi\else\hit@authorization@ctitle\fi}%
   \ifhit@doctor%
     \addcontentsline{toe}{chapter}{\texorpdfstring{\bfseries \hit@authorization@etitle}{\hit@authorization@etitle}}%
   \fi%
     }]{#1}%
   }%
 }
-
 \newcommand\bibstyle@numerical{\bibpunct{[}{]}{,}{s}{,}{\textsuperscript{,}}}
 \citestyle{numerical}
 \DeclareRobustCommand\inlinecite{\@inlinecite}
 \def\@inlinecite#1{\begingroup\citestyle{inline}\let\@cite\NAT@citenum\citep{#1}\endgroup}
 \let\onlinecite\inlinecite
-\ifhit@shenzhen
-  \def\@biblabel#1{\mbox{}［#1］}
-\else
-\fi
+\ifboolexpr{ bool {hit@shenzhen} or (bool {hit@harbin} and (bool {hit@master} or bool {hit@doctor}))}
+  {\def\@biblabel#1{\mbox{［#1］}}}{}
 \renewenvironment{thebibliography}[1]{%
+  \xeCJKDeclareCharClass{FullRight}{"002E}%
   \ifhit@openright\cleardoublepage\else\clearpage\fi\phantomsection%
   \hit@appendix@chapter*{\bibname}[\hit@bibname@etitle]
   \normalsize

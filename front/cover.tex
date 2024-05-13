@@ -48,7 +48,7 @@ ctitletwo={器虚拟化扩展与系统评测},%本科生封面使用
   %=========
   % 英文信息
   %=========
-  etitle={Research on key technologies of partial porous externally pressurized gas bearing},
+etitle={High performance RISC-V open source processor hypervisor extension and system review},
   esubtitle={This is the sub title},
   exueke={Engineering},
   esubject={Computer Science and Technology},
@@ -115,9 +115,9 @@ and the limitations of existing debugging tools made it difficult to solve this 
   
 In terms of debugging tools, we tried difftests based logic simulation software, 
 as well as FPGA simulation acceleration platforma for joint debugging of hardware and software.
-Pure software-based difftest can accurately locate the error site and provide waveform for debug, 
-but the simulation speed is unacceptable, especially in our scenarios requiring boot the operating system and virtual machine.
-Therefore, we tried architecture checkpoints that make it possible to starts the simulation after the operating system booted.
+difftest can accurately locate the error site and provide waveform for debug,
+but the simulation speed is too slow to unacceptable.
+Therefore, we tried architecture checkpoints that make it possible to skip the simulation of operating system booting.
 The FPGA simulation acceleration platform can speed up software executing, acquire microarchitecture checkpoints at any time, 
 and replay the waveform in the logic simulation software.
 However, it can not analyse architecture information to help complex systems debug.
