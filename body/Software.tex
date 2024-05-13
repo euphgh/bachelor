@@ -77,7 +77,7 @@ Linux的输出如图\ref{fig:console-block}所示，
 但是不论是宏观还是微观，其中一个重要的基准线便是主机性能，即未开启虚拟化下运行基准测试的性能。
 该阶段已经完成Linux操作系统的启动，在评估虚拟化性能前，可以先对主机性能进行简单评测。
 于是，同样在FPGA平台中，使用虚拟化扩展的“香山”处理器，启动Linux。
-在Linux中，通过命令行运行CoreMark基准测试，运行输出如图\ref{fig:coremark}所示。
+在Linux中，通过命令行运行CoreMark和Dhrystone基准测试，运行输出如图\ref{fig:coremark}和\ref{fig:dry}所示。
 同时，作为对比也使用了未添加虚拟化扩展的“香山”处理器进行，对比结果如图\ref{tab:perf}所示。
 根据测试结果可以看出，虚拟化扩展的添加，对主机性能影响并不大，保持了原有的高性能乱序核的特点。
 
@@ -89,6 +89,7 @@ Linux的输出如图\ref{fig:console-block}所示，
         基准测试名称   & 原始“香山”跑分 & 虚拟化扩展后“香山”跑分 \\
         \midrule
         CoreMark & 191.22   & 190.7        \\
+Dhrystone & 81433   & 77680        \\
         \bottomrule
     \end{tabular}
     \label{tab:perf}
@@ -102,6 +103,15 @@ Linux的输出如图\ref{fig:console-block}所示，
 \caption{虚拟化扩展后的“香山”迭代5000次运行CoreMark}
 \label{fig:coremark}
 \end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.4]{h-ext-dry.png}
+    \caption{虚拟化扩展后的“香山”迭代500000次运行Dhrystone}
+    \label{fig:dry}
+\end{figure}
+
+
 
 \chapter{虚拟机管理系统的调试}
 通过对系统软件的修改移植，现阶段可以在添加虚拟化扩展的“香山”处理器中启动操作系统，
