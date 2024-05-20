@@ -45,8 +45,6 @@ Linux的输出如图\ref{fig:console-block}所示，
 检查点数据通过DMA从FPGA发送到x86主机后，
 可以被逻辑仿真软件工具重放，即可快速地得到数百万周期后的波形。
 
-
-
 \begin{figure}[htbp]
     \centering
 \includegraphics[scale=0.7]{remu-card.png}
@@ -77,7 +75,7 @@ Linux的输出如图\ref{fig:console-block}所示，
 但是不论是宏观还是微观，其中一个重要的基准线便是主机性能，即未开启虚拟化下运行基准测试的性能。
 该阶段已经完成Linux操作系统的启动，在评估虚拟化性能前，可以先对主机性能进行简单评测。
 于是，同样在FPGA平台中，使用虚拟化扩展的“香山”处理器，启动Linux。
-在Linux中，通过命令行运行CoreMark和Dhrystone基准测试，运行输出如图\ref{fig:coremark}和\ref{fig:dry}所示。
+在Linux中，通过命令行运行CoreMark和Dhrystone基准测试，运行输出如图\ref{fig:coremark}所示。
 同时，作为对比也使用了未添加虚拟化扩展的“香山”处理器进行，对比结果如图\ref{tab:perf}所示。
 根据测试结果可以看出，虚拟化扩展的添加，对主机性能影响并不大，保持了原有的高性能乱序核的特点。
 
@@ -97,17 +95,14 @@ Dhrystone & 81433   & 77680        \\
 
 \begin{figure}[htbp]
     \centering
-\includegraphics[scale=0.52]{coremark.png}
+\includegraphics[scale=0.4]{coremark.png}
 \caption{虚拟化扩展后的“香山”迭代5000次运行CoreMark}
 \label{fig:coremark}
 \end{figure}
 
-\begin{figure}[htbp]
-    \centering
-\includegraphics[scale=0.6]{h-ext-dry.png}
-    \caption{虚拟化扩展后的“香山”迭代500000次运行Dhrystone}
-    \label{fig:dry}
-\end{figure}
+\section{本章小结}
+本章通过Linux-KVM的软件适配以及FPGA仿真加速平台软硬件的联合调试，成功地启动Linux。
+之后，在操作系统中使用常见的基准测试对主机性能进行了相关评测，发现虚拟化扩展对主机性能的影响微乎其微。
 
 \chapter{虚拟机管理系统的调试}
 通过对系统软件的修改移植，现阶段可以在添加虚拟化扩展的“香山”处理器中启动操作系统，
@@ -252,3 +247,10 @@ DMA的传输速度和软件处理数据的速度会逐渐成为FPGA加速仿真�
 因此需要精心设计传输数据的格式，或者降低比对的频率，如多条指令提交后才进行一次比对。
 其本质都是减少数据传输量，降低DMA和软件侧的负荷。
 该部分的工作也因为时间限制尚未完成，会在今后成为研究方向。
+
+\section{本章小结}
+本章描述在使用虚拟化扩展后的“香山”启动虚拟机时的现象以及遇到的问题。
+为了调试该硬件问题，尝试了现有的两种调试工具：基于逻辑仿真工具的差分测试框架和基于FPGA的仿真加速平台。
+然而由于其各自能力的不足，限制了问题的解决。
+体系结构检查点被提出，用于在差分测试框架中跳过冗长的操作系统启动过程。
+而FPGA的加速仿真系统，则需扩展其获取体系结构信息的功能。

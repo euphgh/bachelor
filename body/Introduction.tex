@@ -30,7 +30,7 @@
 % RISC-V也在不断迈向虚拟化技术，这是十分必要的一件事
 % 最后说出我们的工作内容，在这里不用说调试的问题
 
-
+\section{课题研究背景及研究目的和意义}
 2018年11月8日，在网信办、中科院等多个国家部委支持和指导下，
 RISC-V中国联盟于浙江乌镇举行的第五届互联网大会上正式宣布成立。
 代表着RISC-V在我国受到各领域的广泛关注，是RISC-V在国内快速发展的一个里程碑。
@@ -66,7 +66,7 @@ RISC-V在嵌入式领域中，已经逐渐进入由ARM、x86等主流计算机�
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[scale=0.5]{virtual.png}
+\includegraphics[scale=0.6]{virtual.png}
 \caption{云数据中心在不同指令集架构的发展}
 \label{fig:isa-vir}
 \end{figure}
@@ -91,6 +91,30 @@ RISC-V在嵌入式领域中，已经逐渐进入由ARM、x86等主流计算机�
 “香山”始终坚持、坚定地开源所有的设计、验证、基础工具代码，对来自社区的贡献始终表示欢迎。
 因此，十分适合用于高性能RISC-V处理器的虚拟化扩展研究。
 
+\section{国内外研究现状}
+在RISC-V虚拟化拓展规范的仍处于草案阶段时，
+一些主流虚拟机管理程序和模拟器就已经随着拓展的技术规范的更新进行适配，
+例如Xvisor\cite{pdp2015xvisor}、KVM\cite{kvm:H-ext}、
+QEMU\cite{qemu-riscv:H-ext}和Spike\cite{github:spike}等。
+然而，关于虚拟化扩展的硬件实现，仅从拓展的0.6.1版本发布后才陆续出现。
+
+虚拟化扩展的硬件实现工作最早开展在Rocket Chip\cite{itco2022rocket}中，这是加州大学伯克利分校开发的顺序单发射流水线处理器。
+此外，该工作还在处理器中移植了Bao，一种轻量级的虚拟机管理系统\cite{ng-res2020bao}，并且进行了一些简易的虚拟化性能评测。
+2023年，一个六级流水的乱序单发射开源处理器核心CVA6\cite{tvlsi2023cva6}也实现了虚拟化扩展。
+该工作不仅进行了关于两阶段地址转化技术的微架构探索，还对性能、功耗、面积等物理设计进行了一系列优化。
+
+在商业界，StarFive发布了Dubhe系列，这是首款支持虚拟化的商业级RISC-V处理器IP核。
+此外，SiFive的P600系列处理器也支持虚拟化扩展。
+其他支持虚拟化扩展的处理器包括InCore Semiconductors的Chromite处理器和IIT Madras发布的Shakti处理器。
+在国内，进迭时空SpcemiT也发布了实现虚拟化扩展和IOMMU的X100处理器。
+这些处理器提供了硬件级别的支持，使得虚拟化技术在RISC-V体系结构中得到了广泛应用。
+
+此外，RISC-V虚拟化扩展也常常作为可行计算的研究基础，通过虚拟化手段进行可行计算执行环境的隔离。
+目前，RISC-V应用程序处理器可信执行环境的技术委员会（Application-Processor Trusted Execution Environment，AP-TEE）
+正在起草面向RISC-V平台的可行计算的规范，
+讨论了对于在RISC-V平台中实现精密虚拟机所需要实现的指令集扩展和非指令集扩展，被称为CoVE\cite{sahita2023cove}。
+
+\section{本文主要研究内容}
 本文的尝试研究如图\ref{fig:level}的虚拟化系统。
 首先，在底层的硬件，需要为“香山”处理器的“南湖”架构——一个用于学术研究的稳定版本，添加虚拟化扩展。
 第二，在扩展的处理器中运行虚拟机管理系统。
@@ -108,12 +132,12 @@ RISC-V在嵌入式领域中，已经逐渐进入由ARM、x86等主流计算机�
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=0.45]{level.png}
+\includegraphics[scale=0.5]{level.png}
 \caption{虚拟化体系结构与本文研究内容}
     \label{fig:level}
 \end{figure}
 
-
+\section{全文章节安排}
 本文由六个章节组成。
 第一章作为绪论，在简要介绍本文的研究背景和动机的同时，也提出了本文的研究内容。
 第二章介绍技术背景和研究动机，
