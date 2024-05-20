@@ -66,60 +66,82 @@ ekeywords={RISC-V, high-performance processor, virtualization, system evaluation
 }
 
 \begin{cabstract}
-虚拟化是一项在云服务和数据中心中广泛使用的关键技术。
+本文旨在研究RISC-V指令集的虚拟化扩展，以高性能开源处理器“香山”为基础，构建了一个支持虚拟化的软硬件系统。
+虚拟化是一项在云服务和数据中心中广泛使用的技术。
 在需求的推动下，主流计算机体系结构已纷纷实现了虚拟化的硬件扩展支持。
-作为一种新兴的开源指令集，RISC-V也开始关注云数据中心的需求，
-于是提出了处理器的虚拟化扩展规范，这为研究提供了巨大的空间。
-本文尝试以高性能开源处理器“香山”为中心，构建一个支持虚拟化扩展的RISC-V计算机系统。
-具体而言，需要先在处理器硬件级别进行虚拟化扩展的微架构设计，
+RISC-V作为一种新兴的、在物联网终端设备取得一定成果的开源指令集，也开始关注云数据中心的需求，
+于是提出了处理器的虚拟化扩展规范，为研究提供了巨大的空间。
+关于本文的研究方法，先在硬件级别对处理器进行虚拟化扩展的微架构设计，
 然后基于硬件平台对虚拟机管理软件进行适配，尝试在处理器中启动管理软件和虚拟机。
-最后对软硬件整体进行系统级评测。
+最后对软硬件整体进行系统级评测。基于以上的研究方法得到如下结果：
 
-在处理器微架构方面，虚拟化扩展的实现主要需要扩展了“香山”的特权管理单元和虚拟内存单元。
+在处理器微架构方面，
+虚拟化扩展的实现主要需要扩展了“香山”的特权管理单元和虚拟内存单元。
 在虚拟内存单元方面，本文采用了分布式的一级页表缓存和集中式的地址翻译引擎，以平衡翻译速度和时序压力。
 通过添加第二阶段地址翻译单元、实现了第二阶段页表翻译。
 还通过复用二级页表缓存、猝发传输获取页表、压缩一级页表缓存表项等的微架构加快了翻译速度。
 
-在虚拟机管理软件方面，本文选择Linux-KVM作为硬件平台的适配目标。
-在添加虚拟化扩展后的“香山”上启动了Linux，并对主机性能进行系统级评测。
-然而，在尝试使用KVM启动虚拟机时，由于处理器潜在的错误而失败。
+在虚拟机管理软件方面，
+本文在添加虚拟化扩展后的“香山”上启动了Linux，并对主机性能进行系统级评测。
+同时，对调试工具进行了探索，包括基于纯软件仿真的差分测试框架和基于FPGA的仿真加速平台。
+这是因为在Linux中使用KVM启动虚拟机时，由于处理器潜在的错误而启动失败。
 软硬件联合调试的复杂性以及现有调试工具的能力限制使错误难以解决。
-为了调试处理器的错误，本文对尝试对现有的调试手段进行了探索和改进：
-纯软件的差分测试能够准确定位错误现场，提供所需的调试波形图，
-但仿真速度不可接受，尤其在需要启动操作系统和虚拟机的场景下。
-因此，本文尝试了体系结构检查点方法，能够跳过仿真操作系统启动的冗长时间。
-基于FPGA加速仿真平台可以快速执行，获取任意时间点的微架构检查点，并在逻辑仿真软件中精确重放波形图。
-然而，它对于获取体系结构信息的能力非常有限，难以帮助调试复杂系统。
-因此，本文提出了在差分测试框架中重放检查点，以及将差分测试硬件化在FPGA的两种想法。
+为调试错误，本文尝试了在差分测试系统中使用体系结构检查点，帮助跳过仿真操作系统启动的冗长时间。
+还尝试扩展FPGA加速仿真平台获取体系结构信息的能力，力求在高效仿真的基础上实现精确定位出错现场。
+
+根据以上结果可得出结论：
+本文实现了一个RISC-V指令集的、支持处理器虚拟化扩展的软硬件系统，
+该系统以高性能乱序处理器“香山”为底层硬件是，以Linux-KVM为系统软件。
+虚拟化扩展对的处理器在操作系统中的主机性能影响微乎其微。
+处理器硬件设计的现有调试工具在虚拟化场景下的调试能力有限，
+亟需一种既能获取体系结构信息又能快速仿真调试平台。
 
 \end{cabstract}
 
 \begin{eabstract}
-Virtualization is a key technology widely used in cloud services and data centers.
+The purpose of this paper is to
+investigate the virtualization extension of the RISC-V instruction set
+and build a software-hardware system that supports virtualization
+based on the high-performance open-source processor "Xiangshan".
+Virtualization is a widely used technology in cloud services and data centers.
 Driven by demand, mainstream computer architectures have implemented hardware extension support for virtualization.
-As a open source instruction set, RISC-V has also begun to focus on the needs of cloud data centers, 
-and thus proposed hypervisor extension specification, which provides a huge space for research.
-In this paper, we focus on adding hypervisor extension to the open source RISC-V processor "XiangShan", 
-and investigate three aspects: virtualization microarchitecture, system software, and debugging tools.
+RISC-V, as an emerging open-source instruction set that has achieved certain results in IoT terminal devices,
+has also started to pay attention to the needs of cloud data centers.
+Therefore, it proposed the virtualization extension specification for processors,
+providing significant research opportunities.
+Regarding the research methodology of this paper,
+the microarchitecture design of processor virtualization extension is first carried out at the hardware level.
+Then, the virtual machine management software is adapted based on the hardware platform,
+and attempts are made to launch the management software and virtual machines on the processor.
+Finally, a system-level evaluation of the overall software and hardware is conducted.
+Based on the above research methodology, the following results are obtained:
 
-In terms of microarchitecture, 
-we adopt a distributed L1 TLB and a centralized address translation engine to balance translation speed and timing pressure.
-By caching the second stage page table in the L2 TLB, it is possible to speed up the translation from guest physical address to host physical address.
-In addition, we have designed some delicate micro-architectures in the page table walker that can improve the throughput.
+In terms of processor microarchitecture,
+the implementation of virtualization extension mainly requires the extension of Xiangshan's privilege management unit and virtual memory unit.
+For the virtual memory unit, distributed first-level page table cache and a centralized address translation engine
+are applied to balance translation speed and timing pressure.
+By adding a second-stage address translation unit, the second-stage page table translation is realized.
+The translation speed is accelerated through microarchitectural techniques such as reusing the second-level page table cache,
+burst transfers for obtaining page tables,
+and compressing first-level page table cache entries.
 
-In terms of system software, we chose KVM as the target, 
-booted Linux on XiangShan with hypervisor extension, and evaluated the host performance.
-However, we encountered some problems which is difficult debugged when running KVM. 
-The complexity of joint debugging of hardware and software,
-and the limitations of existing debugging tools made it difficult to solve this problems.
+In terms of virtual machine management software,
+Linux on the Xiangshan processor with virtualization extension
+and conducts a system-level performance evaluation of the host.
+Additionally, exploration is carried out for debugging tools,
+including a differential testing framework based on pure software simulation and a simulation acceleration platform based on FPGA.
+This is because, when launching virtual machines using KVM in Linux, startup failures may occur due to potential processor errors.
+The complexity of software-hardware joint debugging
+and the limitations of existing debugging tools' capabilities
+make error resolution difficult.
+To debug errors, architectural checkpoints in the differential testing system is attempted to skip the lengthy process of simulating operating system boot.
+It also attempts to extend the capabilities of the FPGA acceleration simulation platform to obtain architectural information,
+aiming to achieve precise localization of error site when keeping fast simulation speed.
   
-In terms of debugging tools, we tried difftests based logic simulation software, 
-as well as FPGA simulation acceleration platforma for joint debugging of hardware and software.
-difftest can accurately locate the error site and provide waveform for debug,
-but the simulation speed is too slow to unacceptable.
-Therefore, we tried architecture checkpoints that make it possible to skip the simulation of operating system booting.
-The FPGA simulation acceleration platform can speed up software executing, acquire microarchitecture checkpoints at any time, 
-and replay the waveform in the logic simulation software.
-However, it can not analyse architecture information to help complex systems debug.
-Therefore, we propose replaying checkpoints in a difftest and hardwareizing difftest in FPGAs.
+Based on the above results,
+the conclusion can be drawn that a software-hardware system that supports the virtualization extension of the RISC-V instruction set was implemented.
+The system utilizes the high-performance out-of-order processor Xiangshan as the underlying hardware and Linux-KVM as the system software.
+The virtualization extension has negligible impact on the host performance of the processor in the operating system.
+The existing debugging tools for processor hardware design have limited debugging capabilities in virtualization scenarios,
+highlighting the urgent need for a platform that can obtain architectural information and enable fast simulation debugging.
 \end{eabstract}
