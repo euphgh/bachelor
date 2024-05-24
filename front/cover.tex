@@ -30,9 +30,9 @@
   cassosupervisor={某某某教授}, % 副指导老师
   ccosupervisor={某某某教授}, % 联合指导老师
   % 如果是深圳本科毕业论文，需要取消注释下一行，并将内容改为“规范”中要求的封面第一页最下方的日期
-  szshortcdate={2024年6月},
+% szshortcdate={2024年6月},
   % 日期自动使用当前时间，若需指定按如下方式修改：
-  cdate={2024年5月},
+cdate={2024年5月26日},
   cstudentid={120L052208},
   % cstudenttype={学术学位论文}, %非全日制教育申请学位者
   % cnumber={no9527}, %编号
@@ -66,14 +66,13 @@ ekeywords={RISC-V, high-performance processor, virtualization, system evaluation
 }
 
 \begin{cabstract}
-本文旨在研究RISC-V指令集的虚拟化扩展，以高性能开源处理器“香山”为基础，构建了一个支持虚拟化的软硬件系统。
-虚拟化是一项在云服务和数据中心中广泛使用的技术。
+本文的研究目的是以高性能RISC-V开源处理器“香山”为基础，构建了一个支持虚拟化的软硬件系统。
+虚拟化是一项在云计算和数据中心中广泛使用的技术。
 在需求的推动下，主流计算机体系结构已纷纷实现了虚拟化的硬件扩展支持。
-RISC-V作为一种新兴的、在物联网终端设备取得一定成果的开源指令集，也开始关注云数据中心的需求，
-于是提出了处理器的虚拟化扩展规范，为研究提供了巨大的空间。
-关于本文的研究方法，先在硬件级别对处理器进行虚拟化扩展的微架构设计，
+RISC-V作为一种新兴的开源指令集，也开始关注云数据中心的需求，提出了处理器的虚拟化扩展规范，为研究提供了巨大的空间。
+关于本文的研究内容可分为三部分，首先在硬件级别对处理器进行虚拟化扩展的微架构设计，
 然后基于硬件平台对虚拟机管理软件进行适配，尝试在处理器中启动管理软件和虚拟机。
-最后对软硬件整体进行系统级评测。基于以上的研究方法得到如下结果：
+最后对软硬件整体进行系统级评测。
 
 在处理器微架构方面，
 虚拟化扩展的实现主要需要扩展了“香山”的特权管理单元和虚拟内存单元。
@@ -83,15 +82,12 @@ RISC-V作为一种新兴的、在物联网终端设备取得一定成果的开�
 
 在虚拟机管理软件方面，
 本文在添加虚拟化扩展后的“香山”上启动了Linux，并对主机性能进行系统级评测。
-同时，对调试工具进行了探索，包括基于纯软件仿真的差分测试框架和基于FPGA的仿真加速平台。
-这是因为在Linux中使用KVM启动虚拟机时，由于处理器潜在的错误而启动失败。
-软硬件联合调试的复杂性以及现有调试工具的能力限制使错误难以解决。
-为调试错误，本文尝试了在差分测试系统中使用体系结构检查点，帮助跳过仿真操作系统启动的冗长时间。
+同时，对硬件设计实现的调试工具进行了探索，
+本文尝试了在差分测试系统中使用体系结构检查点，帮助跳过仿真操作系统启动的冗长时间。
 还尝试扩展FPGA加速仿真平台获取体系结构信息的能力，力求在高效仿真的基础上实现精确定位出错现场。
 
-根据以上结果可得出结论：
-本文实现了一个RISC-V指令集的、支持处理器虚拟化扩展的软硬件系统，
-该系统以高性能乱序处理器“香山”为底层硬件是，以Linux-KVM为系统软件。
+本文得出的结论是：该研究实现了一个RISC-V指令集的、支持处理器虚拟化扩展的软硬件系统，
+该系统以高性能乱序处理器“香山”为底层硬件，以Linux-KVM为系统软件。
 虚拟化扩展对的处理器在操作系统中的主机性能影响微乎其微。
 处理器硬件设计的现有调试工具在虚拟化场景下的调试能力有限，
 亟需一种既能获取体系结构信息又能快速仿真调试平台。
@@ -99,49 +95,32 @@ RISC-V作为一种新兴的、在物联网终端设备取得一定成果的开�
 \end{cabstract}
 
 \begin{eabstract}
-The purpose of this paper is to
-investigate the virtualization extension of the RISC-V instruction set
-and build a software-hardware system that supports virtualization
-based on the high-performance open-source processor "Xiangshan".
+The purpose of this paper is to build a virtualization-enabled hardware and software system based on a high-performance RISC-V open-source processor "XiangShan".
 Virtualization is a widely used technology in cloud services and data centers.
-Driven by demand, mainstream computer architectures have implemented hardware extension support for virtualization.
-RISC-V, as an emerging open-source instruction set that has achieved certain results in IoT terminal devices,
-has also started to pay attention to the needs of cloud data centers.
-Therefore, it proposed the virtualization extension specification for processors,
-providing significant research opportunities.
-Regarding the research methodology of this paper,
-the microarchitecture design of processor virtualization extension is first carried out at the hardware level.
-Then, the virtual machine management software is adapted based on the hardware platform,
-and attempts are made to launch the management software and virtual machines on the processor.
-Finally, a system-level evaluation of the overall software and hardware is conducted.
-Based on the above research methodology, the following results are obtained:
+Driven by demand, mainstream computer architectures have implemented hardware extensions to support virtualization.
+RISC-V, as an emerging open source instruction set,
+has also started to focus on the needs of cloud data centers by proposing a virtualization extension specification for processors,
+which provides a huge space for research.
+About the research content of this paper can be divided into three parts, firstly, the micro-architecture design of hypervisor extension of processors at the hardware level.
+Then based on the hardware platform to adapt the virtual machine management software, try to start the management software and virtual machine in the processor.
+Finally, the hardware and software as a whole are evaluated at the system level.
 
 In terms of processor microarchitecture,
-the implementation of virtualization extension mainly requires the extension of Xiangshan's privilege management unit and virtual memory unit.
-For the virtual memory unit, distributed first-level page table cache and a centralized address translation engine
-are applied to balance translation speed and timing pressure.
-By adding a second-stage address translation unit, the second-stage page table translation is realized.
-The translation speed is accelerated through microarchitectural techniques such as reusing the second-level page table cache,
-burst transfers for obtaining page tables,
-and compressing first-level page table cache entries.
+the implementation of hypervisor extension mainly requires the expansion of XiangShan's privilege management unit and memory manage unit.
+For the virtual memory unit, A distributed TLB level 1 cache and a centralized address translation engine are adopts to balance the translation speed and timing pressure.
+The second-stage page table translation is realized by adding a second-stage address translation unit.
+The translation speed is also accelerated by a micro-architecture that reuses the TLB of the second-stage page table cache, fetches the page table by burst transfers, and compresses the table entries of the first-stage page table cache.
 
 In terms of virtual machine management software,
-Linux on the Xiangshan processor with virtualization extension
-and conducts a system-level performance evaluation of the host.
-Additionally, exploration is carried out for debugging tools,
-including a differential testing framework based on pure software simulation and a simulation acceleration platform based on FPGA.
-This is because, when launching virtual machines using KVM in Linux, startup failures may occur due to potential processor errors.
-The complexity of software-hardware joint debugging
-and the limitations of existing debugging tools' capabilities
-make error resolution difficult.
-To debug errors, architectural checkpoints in the differential testing system is attempted to skip the lengthy process of simulating operating system boot.
-It also attempts to extend the capabilities of the FPGA acceleration simulation platform to obtain architectural information,
-aiming to achieve precise localization of error site when keeping fast simulation speed.
+Linux is booted on "XiangShan" with hypervisor extensions,
+In OS, a system-level evaluation of the host performance is conducted.
+Meanwhile, debugging tools for hardware design implementation are explored.
+architectural checkpoints is applied in the difftest system to help skip the long boot time of the emulated OS.
+we also tries to extend the ability of FPGA-accelerated simulation platforms to obtain architecture information, and strives to achieve precise location of the error site on the basis of efficient simulation.
   
-Based on the above results,
-the conclusion can be drawn that a software-hardware system that supports the virtualization extension of the RISC-V instruction set was implemented.
-The system utilizes the high-performance out-of-order processor Xiangshan as the underlying hardware and Linux-KVM as the system software.
-The virtualization extension has negligible impact on the host performance of the processor in the operating system.
-The existing debugging tools for processor hardware design have limited debugging capabilities in virtualization scenarios,
-highlighting the urgent need for a platform that can obtain architectural information and enable fast simulation debugging.
+This paper concludes that we implements a hardware and software system of RISC-V instruction set that supports the hypervisor extension of processor.
+The system use a high-performance out of ordered processor "XiangShan" as the underlying hardware and Linux-KVM as the system software.
+Hypervisor extensions have a minimal impact on the processor's host performance in the operating system.
+Existing debugging tools for processor hardware design have limited debugging capabilities in virtualization scenarios.
+There is an urgent need for a debugging platform that can both obtain architecture information and fast simulation.
 \end{eabstract}
